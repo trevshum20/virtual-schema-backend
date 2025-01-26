@@ -31,7 +31,6 @@ public class VirtualFieldValue {
     private String value;
 
     public VirtualFieldValue() {
-        System.out.println(">>>> Hit VFV Constructor!");
     }
 
     // Getters and setters
@@ -39,7 +38,6 @@ public class VirtualFieldValue {
         return id;
     }
     public void setId(Integer id) {
-        System.out.println(">>>> Hit Set Id!");
         this.id = id;
     }
 
@@ -47,7 +45,6 @@ public class VirtualFieldValue {
         return schemaMetadataId;
     }
     public void setSchemaMetadataId(Integer schemaMetadataId) {
-        System.out.println(">>>> Hit setSchemaMetadataId!");
         this.schemaMetadataId = schemaMetadataId;
     }
 
@@ -55,7 +52,6 @@ public class VirtualFieldValue {
         return recordId;
     }
     public void setRecordId(Integer recordId) {
-        System.out.println(">>>> Hit setRecordId!");
         this.recordId = recordId;
     }
 
@@ -63,7 +59,6 @@ public class VirtualFieldValue {
         return value;
     }
     public void setValue(String value) {
-        System.out.println(">>>> Hit setValue!");
         this.value = value;
     }
 }

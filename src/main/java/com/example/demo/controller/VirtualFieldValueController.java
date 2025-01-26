@@ -39,8 +39,6 @@ public class VirtualFieldValueController {
 
     @PostMapping
     public VirtualFieldValue createValue(@RequestBody VirtualFieldValue vfv) {
-        logger.info("Reached createValue, vfv={}", vfv);
-        // System.out.println("Incoming VirtualFieldValue: " + vfv);
         return vfValueRepo.save(vfv);
     }
 
