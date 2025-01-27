@@ -65,7 +65,6 @@ public class SecurityConfig {
 
         http
             // Enable CORS support
-            // .cors(Customizer.withDefaults())
             .cors((cors) -> cors
                 .configurationSource(corsConfigurationSource())
 			)
@@ -88,7 +87,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     // Redirect to React app's login page after logout
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com");
+                    response.sendRedirect("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com/");
                 })
                 .invalidateHttpSession(true) // Invalidate the session
                 .deleteCookies("JSESSIONID") // Delete session cookie
@@ -103,9 +102,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Change this list to your desired origins
-        config.setAllowedOrigins(List.of("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com"));
+        config.setAllowedOrigins(List.of("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Encoding", "Accept-Language", "Connection", "Host", "Origin", "Referer", "User-Agent"));
         config.setAllowCredentials(true); // let cookies/session across domains
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
