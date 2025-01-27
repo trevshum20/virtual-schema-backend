@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,21 +28,25 @@ public class VirtualFieldValueController {
         this.vfValueRepo = vfValueRepo;
     }
 
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @GetMapping
     public List<VirtualFieldValue> getAll() {
         return vfValueRepo.findAll();
     }
 
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @GetMapping("/record/{recordId}")
     public List<VirtualFieldValue> getByRecordId(@PathVariable Integer recordId) {
         return vfValueRepo.findByRecordId(recordId);
     }
 
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @PostMapping
     public VirtualFieldValue createValue(@RequestBody VirtualFieldValue vfv) {
         return vfValueRepo.save(vfv);
     }
 
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @PutMapping("/{id}")
     public VirtualFieldValue updateValue(@PathVariable Integer id, @RequestBody VirtualFieldValue updated) {
         return vfValueRepo.findById(id)
@@ -53,12 +58,14 @@ public class VirtualFieldValueController {
                 .orElseThrow(() -> new RuntimeException("Value not found with id: " + id));
     }
 
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @DeleteMapping("/{id}")
     public void deleteValue(@PathVariable Integer id) {
         vfValueRepo.deleteById(id);
     }
 
     // DELETE all values for a given record_id
+    @CrossOrigin(origins = "http://virtual-schema-react.s3-website-us-east-1.amazonaws.com")
     @DeleteMapping("/record/{recordId}")
     public void deleteByRecordId(@PathVariable Integer recordId) {
         List<VirtualFieldValue> values = vfValueRepo.findByRecordId(recordId);

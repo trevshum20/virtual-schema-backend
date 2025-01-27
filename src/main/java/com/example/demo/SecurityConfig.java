@@ -65,6 +65,7 @@ public class SecurityConfig {
 
         http
             // Enable CORS support
+            // .cors(Customizer.withDefaults())
             .cors((cors) -> cors
                 .configurationSource(corsConfigurationSource())
 			)
