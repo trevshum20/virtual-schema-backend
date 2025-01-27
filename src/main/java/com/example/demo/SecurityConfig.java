@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +16,6 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 // For CORS
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -67,7 +65,10 @@ public class SecurityConfig {
 
         http
             // Enable CORS support
-            .cors(Customizer.withDefaults())
+            // .cors(Customizer.withDefaults())
+            .cors((cors) -> cors
+                .configurationSource(corsConfigurationSource())
+			)
             .csrf().disable()
             // Lock down everything else, for example:
             .authorizeHttpRequests(auth -> auth
@@ -79,7 +80,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/api/login")
                 .successHandler((request, response, authentication) -> {
                     // Redirect to React app after successful login
-                    response.sendRedirect("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com/");
+                    response.sendRedirect("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com/");
                 })
         )
             .logout(logout -> logout
@@ -87,7 +88,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     // Redirect to React app's login page after logout
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com");
+                    response.sendRedirect("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com");
                 })
                 .invalidateHttpSession(true) // Invalidate the session
                 .deleteCookies("JSESSIONID") // Delete session cookie
@@ -98,11 +99,11 @@ public class SecurityConfig {
 
     // 2) The CorsConfigurationSource bean that configures allowed origins, etc.
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         // Change this list to your desired origins
-        config.setAllowedOrigins(List.of("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com"));
+        config.setAllowedOrigins(List.of("http://virtual-schema-react.s3-website-us-east-1.amazonaws.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true); // let cookies/session across domains
