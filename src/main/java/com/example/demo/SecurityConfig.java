@@ -79,7 +79,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/api/login")
                 .successHandler((request, response, authentication) -> {
                     // Redirect to React app after successful login
-                    response.sendRedirect("http://localhost:3000/");
+                    response.sendRedirect("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com/");
                 })
         )
             .logout(logout -> logout
@@ -87,7 +87,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     // Redirect to React app's login page after logout
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect("http://localhost:3000");
+                    response.sendRedirect("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com");
                 })
                 .invalidateHttpSession(true) // Invalidate the session
                 .deleteCookies("JSESSIONID") // Delete session cookie
@@ -102,7 +102,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Change this list to your desired origins
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(List.of("http://http://virtual-schema-react.s3-website-us-east-1.amazonaws.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true); // let cookies/session across domains
