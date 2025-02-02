@@ -79,7 +79,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/api/login")
                 .successHandler((request, response, authentication) -> {
                     // Redirect to React app after successful login
-                    response.sendRedirect("https://schema.trevorshumway.com");
+                    response.sendRedirect("http://localhost:3000");
                 })
         )
             .logout(logout -> logout
@@ -87,7 +87,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     // Redirect to React app's login page after logout
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect("https://schema.trevorshumway.com");
+                    response.sendRedirect("http://localhost:3000");
                 })
                 .invalidateHttpSession(true) // Invalidate the session
                 .deleteCookies("JSESSIONID") // Delete session cookie
@@ -102,7 +102,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Change this list to your desired origins
-        config.setAllowedOrigins(List.of("https://schema.trevorshumway.com"));
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Encoding", "Accept-Language", "Connection", "Host", "Origin", "Referer", "User-Agent"));
         config.setAllowCredentials(true); // let cookies/session across domains

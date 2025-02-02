@@ -33,6 +33,12 @@ public class SchemaMetadata {
     @Column(name = "data_type", nullable = false)
     private String dataType;
 
+    @Column(name = "required_field", nullable = true)
+    private Boolean requiredField;
+
+    @Column(name = "max_length", nullable = true)
+    private Integer maxLength;
+
     @Column(name = "created_by_name")
     private String createdByName;
 
@@ -77,6 +83,22 @@ public class SchemaMetadata {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+    public Boolean getRequiredField() {
+        return requiredField;
+    }
+
+    public void setRequiredField(Boolean requiredField) {
+        this.requiredField = requiredField;
+    }
+
+    public Integer getMaxLength() {
+        return maxLength;
+    }
+
+    public void setMaxLength(Integer maxLength) {
+        this.maxLength = maxLength;
     }
 
     public String getCreatedByName() {
