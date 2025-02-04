@@ -27,7 +27,7 @@ public class VirtualFieldValue {
     @Column(name = "record_id", nullable = false)
     private Integer recordId;
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "value", nullable = true)
     private String value;
 
     public VirtualFieldValue() {
