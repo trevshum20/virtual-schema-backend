@@ -24,6 +24,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private String corsAllowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+
+    private String loginRedirectUrl = System.getenv("LOGIN_REDIRECT_URL");
+
+    private String logoutRedirectUrl = System.getenv("LOGOUT_REDIRECT_URL");
+
     // If you have a DataSource bean for JDBC auth:
     private final DataSource dataSource;
 
@@ -79,7 +85,7 @@ public class SecurityConfig {
                 .loginProcessingUrl("/api/login")
                 .successHandler((request, response, authentication) -> {
                     // Redirect to React app after successful login
-                    response.sendRedirect("http://localhost:3000");
+                    response.sendRedirect(loginRedirectUrl);
                 })
         )
             .logout(logout -> logout
@@ -87,7 +93,7 @@ public class SecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     // Redirect to React app's login page after logout
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect("http://localhost:3000");
+                    response.sendRedirect(logoutRedirectUrl);
                 })
                 .invalidateHttpSession(true) // Invalidate the session
                 .deleteCookies("JSESSIONID") // Delete session cookie
@@ -102,7 +108,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Change this list to your desired origins
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(List.of(corsAllowedOrigins));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Accept-Encoding", "Accept-Language", "Connection", "Host", "Origin", "Referer", "User-Agent"));
         config.setAllowCredentials(true); // let cookies/session across domains
