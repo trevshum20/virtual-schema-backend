@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +22,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -64,40 +70,28 @@ public class SecurityConfig {
     }
 
     // 1) The SecurityFilterChain that references .cors()
-    @SuppressWarnings("removal")
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authProvider) throws Exception {
-        http.authenticationProvider(authProvider);
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, com.example.demo.JwtAuthenticationFilter jwtFilter) throws Exception {
         http
-            // Enable CORS support
-            .cors((cors) -> cors
-                .configurationSource(corsConfigurationSource())
-			)
-            .csrf().disable()
-            // Lock down everything else, for example:
+            // CORS still uses your existing corsConfigurationSource()
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            // Stateless API, no CSRF for JWT
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // No form login or basic auth when using JWT
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .logout(AbstractHttpConfigurer::disable)
+
+            // Authz rules: allow auth + health, protect everything else
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/logout", "/error","/health").permitAll()
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/auth/**", "/health", "/actuator/health", "/error").permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(formLogin -> formLogin
-                .loginProcessingUrl("/api/login")
-                .successHandler((request, response, authentication) -> {
-                    // Redirect to React app after successful login
-                    response.sendRedirect(loginRedirectUrl);
-                })
-        )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    // Redirect to React app's login page after logout
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.sendRedirect(logoutRedirectUrl);
-                })
-                .invalidateHttpSession(true) // Invalidate the session
-                .deleteCookies("JSESSIONID") // Delete session cookie
-            );
+
+            // Install our JWT filter
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -116,5 +110,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
